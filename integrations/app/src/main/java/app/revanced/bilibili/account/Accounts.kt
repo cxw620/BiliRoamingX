@@ -174,6 +174,14 @@ object Accounts {
     private fun checkUserStatus() = runCatching {
         val mid = Accounts.mid
         if (mid <= 0) return@runCatching
+
+        // ! Temporarily skip blacklist validation and not change too much for easily rebsaing,
+        // ! for those who's banned by mistake or by dogmatical jurisdiction.
+        // ! Should introduce validation from roaming server that user has set, although 
+        // ! no server supports.
+        cachePrefs.edit { putBoolean("user_blocked_$mid", false) }
+        return@runCatching
+
         val checkInterval = TimeUnit.HOURS.toMillis(1)
         val key = "user_status_last_check_time_$mid"
         val lastCheckTime = cachePrefs.getLong(key, 0L)
